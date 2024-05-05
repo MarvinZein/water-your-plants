@@ -15,8 +15,8 @@ import (
 type Plant struct {
 	Id            int       `json:"id"`
 	Name          string    `json:"name"`
-	Place         string    `json"place"`
-	LastWateredAt time.Time "json:lastWateredAt"
+	Place         string    `json:"place"`
+	LastWateredAt time.Time `json:"lastWateredAt"`
 }
 
 func main() {
@@ -77,7 +77,7 @@ func jsonContentTypeMiddleware(next http.Handler) http.Handler {
 // Get all plants
 func getPlants(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		rows, err := db.Query("SELECT * FROM plants")
+		rows, err := db.Query("SELECT * FROM plants;")
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -95,7 +95,8 @@ func getPlants(db *sql.DB) http.HandlerFunc {
 			log.Fatal(err)
 		}
 
-		json.NewEncoder(w).Encode(plants)
+		response := map[string][]Plant{"plants": plants}
+		json.NewEncoder(w).Encode(response)
 	}
 }
 
@@ -112,7 +113,8 @@ func getPlant(db *sql.DB) http.HandlerFunc {
 			return
 		}
 
-		json.NewEncoder(w).Encode(p)
+		response := map[string]Plant{"plant": p}
+		json.NewEncoder(w).Encode(response)
 	}
 }
 
