@@ -28,7 +28,7 @@ func main() {
 	defer db.Close()
 
 	// Create plants table if not exists
-	_, err = db.Exec("CREATE TABLE IF NOT EXISTS plants (id SERIAL PRIMARY KEY, name TEXT, place TEXT, last_watered_at DATE);")
+	_, err = db.Exec("CREATE TABLE IF NOT EXISTS plants (id SERIAL PRIMARY KEY, name TEXT, place TEXT, last_watered_at TIMESTAMP);")
 	if err != nil {
 		log.Fatal(err)
 	}
