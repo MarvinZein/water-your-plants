@@ -1,9 +1,9 @@
 import type { PageLoad } from "./$types"
 
-const apiUrl = 'http://localhost:8000/api/go'
+import { apiURL } from "$lib";
 
 export const load: PageLoad = async ({ fetch }) => {
-    const plantsResponse = await fetch(apiUrl + '/plants');
+    const plantsResponse = await fetch(apiURL + '/plants');
     if (!plantsResponse.ok) {
         throw new Error('Failed to fetch plants');
     }

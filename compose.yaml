@@ -1,4 +1,17 @@
 services:
+  sveltekitapp:
+    container_name: sveltekitapp
+    image: sveltekitapp:1.0.0
+    build:
+      context: ./frontend
+      dockerfile: sveltekit.dockerfile
+    ports:
+      - '3000:3000'
+    restart: unless-stopped
+    environment:
+      - SVELTEKIT_PUBLIC_API_URL=http://goapp:8000/api/go
+    depends_on:
+      - goapp
   goapp:
     container_name: goapp
     image: goapp:1.0.0

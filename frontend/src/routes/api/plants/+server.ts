@@ -2,6 +2,8 @@ import { error, json} from '@sveltejs/kit';
 
 import type { Plant } from '$lib/types.js';
 
+import { apiURL } from '$lib';
+
 export function GET({ url }) {
 	const min = Number(url.searchParams.get('min') ?? '0');
 	const max = Number(url.searchParams.get('max') ?? '1');
@@ -26,7 +28,7 @@ export async function POST({request}) {
         lastWateredAt: new Date().toISOString()
     }
 
-    const response  = await fetch(`http://localhost:8000/api/go/plants`, {
+    const response  = await fetch(`${apiURL}/plants`, {
         method: 'POST',
         body: JSON.stringify({...plant}),
         headers: {
@@ -40,7 +42,7 @@ export async function POST({request}) {
 export async function PUT({request}) {
     const {id, name, place, lastWateredAt} = await request.json();
     
-    const response  = await fetch(`http://localhost:8000/api/go/plants`, {
+    const response  = await fetch(`${apiURL}/plants`, {
         method: 'PUT',
         body: JSON.stringify({id, name, place, lastWateredAt}),
         headers: {
@@ -54,7 +56,7 @@ export async function PUT({request}) {
 export async function DELETE({request}) {
     const {id, name, place, lastWateredAt} = await request.json();
     
-    const response  = await fetch(`http://localhost:8000/api/go/plants/${id}`, {
+    const response  = await fetch(`${apiURL}/plants/${id}`, {
         method: 'DELETE',
     })
 
