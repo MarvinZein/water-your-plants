@@ -37,7 +37,7 @@ func main() {
 	router.HandleFunc("/api/go/plants", getPlants(db)).Methods("GET")
 	router.HandleFunc("/api/go/plants", createPlant(db)).Methods("POST")
 	router.HandleFunc("/api/go/plants/{id}", getPlant(db)).Methods("GET")
-	router.HandleFunc("/api/go/plants/{id}", updatePlant(db)).Methods("PUT")
+	router.HandleFunc("/api/go/plants", updatePlant(db)).Methods("PUT")
 	router.HandleFunc("/api/go/plants/{id}", deletePlant(db)).Methods("DELETE")
 
 	// wrap router with CORS and JSON content type middlewares
@@ -139,18 +139,15 @@ func updatePlant(db *sql.DB) http.HandlerFunc {
 		var p Plant
 		json.NewDecoder(r.Body).Decode(&p)
 
-		vars := mux.Vars(r)
-		id := vars["id"]
-
 		// Execute the update query
-		_, err := db.Exec("UPDATE plants SET name = $1, place = $2, last_watered_at = $3 WHERE id = $4", p.Name, p.Place, p.LastWateredAt, id)
+		_, err := db.Exec("UPDATE plants SET name = $1, place = $2, last_watered_at = $3 WHERE id = $4", p.Name, p.Place, p.LastWateredAt, p.Id)
 		if err != nil {
 			log.Fatal(err)
 		}
 
 		// Retrieve the updated plant data from the database
 		var updatedPlant Plant
-		err = db.QueryRow("SELECT * FROM plants WHERE id = $1", id).Scan(&updatedPlant.Id, &updatedPlant.Name, &updatedPlant.Place, &updatedPlant.LastWateredAt)
+		err = db.QueryRow("SELECT * FROM plants WHERE id = $1", p.Id).Scan(&updatedPlant.Id, &updatedPlant.Name, &updatedPlant.Place, &updatedPlant.LastWateredAt)
 		if err != nil {
 			log.Fatal(err)
 		}
