@@ -96,7 +96,10 @@ func getPlants(db *sql.DB) http.HandlerFunc {
 		}
 
 		response := map[string][]Plant{"plants": plants}
-		json.NewEncoder(w).Encode(response)
+		err = json.NewEncoder(w).Encode(response)
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 }
 
@@ -114,7 +117,10 @@ func getPlant(db *sql.DB) http.HandlerFunc {
 		}
 
 		response := map[string]Plant{"plant": p}
-		json.NewEncoder(w).Encode(response)
+		err = json.NewEncoder(w).Encode(response)
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 }
 
@@ -122,14 +128,20 @@ func getPlant(db *sql.DB) http.HandlerFunc {
 func createPlant(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var p Plant
-		json.NewDecoder(r.Body).Decode(&p)
-
-		err := db.QueryRow("INSERT INTO plants (name, place, last_watered_at) VALUES ($1, $2, $3) RETURNING id", p.Name, p.Place, p.LastWateredAt).Scan(&p.Id)
+		err := json.NewDecoder(r.Body).Decode(&p)
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		json.NewEncoder(w).Encode(p)
+		err = db.QueryRow("INSERT INTO plants (name, place, last_watered_at) VALUES ($1, $2, $3) RETURNING id", p.Name, p.Place, p.LastWateredAt).Scan(&p.Id)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		err = json.NewEncoder(w).Encode(p)
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 }
 
@@ -137,10 +149,13 @@ func createPlant(db *sql.DB) http.HandlerFunc {
 func updatePlant(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var p Plant
-		json.NewDecoder(r.Body).Decode(&p)
+		err := json.NewDecoder(r.Body).Decode(&p)
+		if err != nil {
+			log.Fatal(err)
+		}
 
 		// Execute the update query
-		_, err := db.Exec("UPDATE plants SET name = $1, place = $2, last_watered_at = $3 WHERE id = $4", p.Name, p.Place, p.LastWateredAt, p.Id)
+		_, err = db.Exec("UPDATE plants SET name = $1, place = $2, last_watered_at = $3 WHERE id = $4", p.Name, p.Place, p.LastWateredAt, p.Id)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -153,7 +168,10 @@ func updatePlant(db *sql.DB) http.HandlerFunc {
 		}
 
 		// Send the updated plant data in the response
-		json.NewEncoder(w).Encode(updatedPlant)
+		err = json.NewEncoder(w).Encode(updatedPlant)
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 }
 
@@ -176,7 +194,10 @@ func deletePlant(db *sql.DB) http.HandlerFunc {
 				return
 			}
 
-			json.NewEncoder(w).Encode("Plant deleted")
+			err = json.NewEncoder(w).Encode("Plant deleted")
+			if err != nil {
+				log.Fatal(err)
+			}
 		}
 	}
 }
